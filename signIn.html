@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign In</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+        .form-container {
+          background-color: white;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        input[type=text], input[type=password] {
+          width: 100%;
+          padding: 10px;
+          margin: 8px 0;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+        input[type=submit] {
+          background-color: #4CAF50;
+          color: white;
+          padding: 12px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          width: 100%;
+        }
+        input[type=submit]:hover {
+          background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Sign In</h2>
+    <form id="login">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <input type="submit" value="Sign In">
+        <div id="error-message" style="color: red; margin-top: 10px;"></div>
+
+    </form>
+</div>
+<script>
+    document.getElementById('login').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('error-message');
+  errorMessage.textContent = ''; // 🔄 Clear previous message
+
+
+
+      fetch('http://localhost:8080/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Invalid credentials');
+          }
+          return res.text(); // Or res.json(), depending on your server
+        })
+        .then(token => {
+          localStorage.setItem('token', token);
+          window.location.href = 'hello.html';
+        })
+        .catch(error => {
+    console.error('Login error:', error);
+    errorMessage.textContent = 'Wrong username or password.';
+
+        });
+    });
+</script>
+</body>
+</html>
